@@ -7,12 +7,11 @@
  * Created on June 10, 2014, 11:18 AM
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "main.h"
 
 /*
- * 
+ * main creates a tree, prints it, and executes extra credit function
  */
 int main(int argc, char** argv) {
     int content_array[] = {6, 2, 5, 0, 1, 3, 4};
@@ -24,6 +23,23 @@ int main(int argc, char** argv) {
 
     /*print tree in-order*/
     print_postorder(lab_tree.root);
+    printf("\n");
+
+    /*extra credit call*/
+    int search_num; //number to be searched for
+    int result = FALSE; //pass/fail of function call
+    Node * new_child; //new child to be found by extra_credit
+    printf("Please enter number to search in the tree\n");
+    scanf("%d", &search_num);
+    result = extra_credit(search_num, new_child, lab_tree.root);
+
+    /*print result of function call if successful*/
+    if(result){
+        printf("Match! Content of new Node: %d\n", new_child->content);
+    }
+    else{
+        printf("No match. New node was not created.\n");
+    }
 
     return (EXIT_SUCCESS);
 }
@@ -52,10 +68,15 @@ void build_tree(int * content_array, tree * tree) {
     /*allocate space for binary tree heap*/
     Node * tree_heap[tree->size];
 
-    /*loop to insert all array contents into tree*/
+    /*
+     * loop to insert all array contents into tree. Start at 1 so heap array 
+     * arithmetic is executed properly
+     */
     int i;
     for (i = 1; i <= tree->size; i++) {
-        Node * next_node = node_constructor(content_array[i - 1]); //allocate new node
+        /*allocate new node. NOTE: content array and heap array are offset by one*/
+        Node * next_node = node_constructor(content_array[i - 1]);
+
         /*fill binary heap with new node*/
         tree_heap[i] = next_node;
 
@@ -87,3 +108,30 @@ void print_postorder(Node * current_node) {
     }
     printf("%d, ", current_node->content); //visit current node
 }
+
+/*
+ * extra credit takes a number to find in the tree. The function finds the 
+ * number, creates random node as a child and passes back the pointer to the
+ * child.
+ * 
+ * On success it passes back an int 1, on failure a 0
+ */
+int extra_credit(int reference_num, Node * pointer_arg, Node * current_node) {
+    /*check if reference_num is in current node*/
+    if (reference_num == current_node->content) {
+        int new_content = 0x2a;
+        pointer_arg = node_constructor(new_content);
+        return TRUE;
+    }
+
+    /*if not check its children*/
+    int result = FALSE;
+    if (current_node->left != NULL) {
+        result = extra_credit(reference_num, pointer_arg, current_node->left);
+    }
+    if (current_node->right != NULL && result == FALSE) {
+        result = extra_credit(reference_num, pointer_arg, current_node->right);
+    }
+    return result;
+}
+
