@@ -79,7 +79,8 @@ void build_tree(int * content_array, tree * tree) {
 
         /*fill binary heap with new node*/
         tree_heap[i] = next_node;
-
+        
+        /*Set up link from parent to child*/
         if (i == 1) { //if root node
             tree->root = next_node;
         } else { //if not root set parent to current node using heap
