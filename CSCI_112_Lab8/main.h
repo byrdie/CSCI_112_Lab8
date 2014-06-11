@@ -24,8 +24,7 @@ typedef struct{
 /*function prototypes*/
 Node * node_constructor(int);
 void build_tree(int*, tree*);
-void recursive_insert(Node*, Node*);
-void print_inorder(tree *, Node*);
+void print_postorder(Node*);
 
 #endif	/* MAIN_H */
 

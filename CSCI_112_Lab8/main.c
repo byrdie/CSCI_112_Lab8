@@ -19,8 +19,11 @@ int main(int argc, char** argv) {
 
     /*initialize tree*/
     tree lab_tree;
-    lab_tree.size = sizeof(content_array);
-    build_tree(content_array, lab_tree);
+    lab_tree.size = sizeof (content_array) / sizeof (int);
+    build_tree(content_array, &lab_tree);
+
+    /*print tree in-order*/
+    print_postorder(lab_tree.root);
 
     return (EXIT_SUCCESS);
 }
@@ -32,59 +35,55 @@ int main(int argc, char** argv) {
  * returns a pointer to the allocated node
  */
 Node * node_constructor(int content) {
-    Node * new_node = malloc(sizeof (Node));
-    new_node->content = content;
+    Node * new_node = malloc(sizeof (Node)); //dynamically allocate space for new node
+    new_node->content = content; //initialize content    
+
+    /*ensure no junk for pointers to children*/
     new_node->left = NULL;
     new_node->right = NULL;
 }
 
 /*
- * build_tree accepts an array of content to be placed into a tree. Content is
- * inserted into the tree in correct order and a pointer to the root node
- * is returned.
+ * build tree takes an array of tree elements and inserts them into a heap
+ * structure. The function then uses the heap structure to reference the 
+ * element's parent and set up the link to the child.
  */
 void build_tree(int * content_array, tree * tree) {
+    /*allocate space for binary tree heap*/
+    Node * tree_heap[tree->size];
+
     /*loop to insert all array contents into tree*/
     int i;
-    for (i = 0; i < tree->size; i++) {
-        Node * next_node = node_constructor(content_array[i]); //allocate new node
+    for (i = 1; i <= tree->size; i++) {
+        Node * next_node = node_constructor(content_array[i - 1]); //allocate new node
+        /*fill binary heap with new node*/
+        tree_heap[i] = next_node;
 
-        /*insert new node into tree*/
-        if (tree->root == NULL) { //nothing in the tree
+        if (i == 1) { //if root node
             tree->root = next_node;
-        } else { //root is declared, recursively find spot
-            recursive_insert(tree->root, next_node);
+        } else { //if not root set parent to current node using heap
+            int parent_index = i / 2; //use heap to find parent 
+            if (i % 2 == 0) { // even values of i are left children
+                tree_heap[parent_index]->left = next_node;
+            } else { // odd values are right children
+                tree_heap[parent_index]->right = next_node;
+            }
         }
-    }
-
-}
-
-/*
- * recursive insert accepts a node being inserted and the current local node
- * being examined. Once a spot is found the node is saved using its parent
- */
-void recursive_insert(Node * local_root, Node * node) {
-    if (local_root->content < node->content) { //traverse left child
-        if (local_root->left == NULL) { //nothing there, insert node
-            local_root->left = node;
-        } else { //already a child, traverse to next level
-            recursive_insert(local_root->left, node);
-        }
-    } else if (local_root->content > node->content) { //traverse right child
-        if (local_root->right == NULL) { //nothing there, insert node
-            local_root->right = node;
-        } else { //already a child, traverse to next level
-            recursive_insert(local_root->right, node);
-        }
-    } else {
-        printf("Node is already in tree\n");
     }
 }
 
 /*
- * print inorder accepts a tree and local root as a parameter and recursively
+ * print postorder accepts a tree and local root as a parameter and recursively
  * traverses and prints all of the content.
- */ 
-void print_inorder(tree * tree, Node * local_root){
-    
+ */
+void print_postorder(Node * current_node) {
+
+    if (current_node->left != NULL) { // visit left node
+        print_postorder(current_node->left);
+    }
+
+    if (current_node->right != NULL) { //visit right node
+        print_postorder(current_node->right);
+    }
+    printf("%d, ", current_node->content); //visit current node
 }
