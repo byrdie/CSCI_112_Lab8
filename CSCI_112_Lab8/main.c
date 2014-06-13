@@ -21,24 +21,31 @@ int main(int argc, char** argv) {
     lab_tree.size = sizeof (content_array) / sizeof (int);
     build_tree(content_array, &lab_tree);
 
-    /*print tree in-order*/
-    print_postorder(lab_tree.root);
-    printf("\n");
+    int i = 0;
+    while (1) {
 
-    /*extra credit call*/
-    int search_num; //number to be searched for
-    int result = FALSE; //pass/fail of function call
-    Node * new_child; //new child to be found by extra_credit
-    printf("Please enter number to search in the tree\n");
-    scanf("%d", &search_num);
-    result = extra_credit(search_num, new_child, lab_tree.root);
+        /*print tree post-order*/
+        puts("Print tree in post-order");
+        print_postorder(lab_tree.root);
+        printf("\n\n");
 
-    /*print result of function call if successful*/
-    if(result){
-        printf("Match! Content of new Node: %d\n", new_child->content);
-    }
-    else{
-        printf("No match. New node was not created.\n");
+        /*extra credit call*/
+        int search_num; //number to be searched for
+        int result = FALSE; //pass/fail of function call
+
+        printf("Please enter number to search in the tree\n");
+        scanf("%d", &search_num);
+        int new_content = 0x2a << i;
+        Node * new_child = node_constructor(new_content);
+        result = extra_credit(search_num, new_child, lab_tree.root);
+
+        /*print result of function call if successful*/
+        if (result) {
+            printf("Match! Content of new Node: %d\n", new_child->content);
+        } else {
+            printf("No match. New node was not created.\n");
+        }
+        i++;
     }
 
     return (EXIT_SUCCESS);
@@ -79,7 +86,7 @@ void build_tree(int * content_array, tree * tree) {
 
         /*fill binary heap with new node*/
         tree_heap[i] = next_node;
-        
+
         /*Set up link from parent to child*/
         if (i == 1) { //if root node
             tree->root = next_node;
@@ -120,8 +127,7 @@ void print_postorder(Node * current_node) {
 int extra_credit(int reference_num, Node * pointer_arg, Node * current_node) {
     /*check if reference_num is in current node*/
     if (reference_num == current_node->content) {
-        int new_content = 0x2a;
-        pointer_arg = node_constructor(new_content);
+        current_node->left = pointer_arg;
         return TRUE;
     }
 
