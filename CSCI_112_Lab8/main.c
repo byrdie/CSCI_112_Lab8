@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
     int i = 0;
     while (1) {
 
+        printf("\n");
         /*print tree post-order*/
         puts("Print tree in post-order");
         print_postorder(lab_tree.root);
@@ -47,7 +48,6 @@ int main(int argc, char** argv) {
         }
         i++;
     }
-
     return (EXIT_SUCCESS);
 }
 
